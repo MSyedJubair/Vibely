@@ -1,19 +1,9 @@
-import prisma from '@/lib/db'
 import React from 'react'
 
-const Home = async () => {
-  const users = await prisma.user.findMany()
-
+const page = () => {
   return (
-    <div>
-      <div>
-        <h1>Users</h1>
-        {users.map((user) => (
-          <li key={user.id}>{user.name}</li>
-        ))}
-      </div>
-    </div>
+    <div>page</div>
   )
 }
 
-export default Home
+export default page
