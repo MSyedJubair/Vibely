@@ -1,5 +1,5 @@
 import 'server-only'; // <-- ensure this file cannot be imported from the client
-
+ 
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { headers } from 'next/headers';
 import { cache } from 'react';
@@ -25,7 +25,3 @@ export const trpc = createTRPCOptionsProxy({
 //   client: createTRPCClient({ links: [httpLink({ url: '...' })] }),
 //   queryClient: getQueryClient,
 // });
-
-export const caller = appRouter.createCaller(async () =>
-  createTRPCContext({ headers: await headers() }),
-);
