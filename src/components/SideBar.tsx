@@ -51,7 +51,7 @@ const SideBar = () => {
             </div>
             {!isSidebarCollapsed && (
               <span className="font-semibold text-xl tracking-tight whitespace-nowrap">
-                Lovable<span className="text-white/50">Clone</span>
+                Open<span className="text-white/50">Clone</span>
               </span>
             )}
           </div>
