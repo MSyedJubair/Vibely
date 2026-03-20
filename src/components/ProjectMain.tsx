@@ -24,7 +24,7 @@ const ProjectMain = () => {
   const { projectId } = useParams();
   const trpc = useTRPC();
 
-  const { data: project, isLoading } = useQuery(
+  const { data: project, isLoading, isFetching } = useQuery(
     trpc.project.getProject.queryOptions({ projectId: Number(projectId) })
   );
 
@@ -63,12 +63,7 @@ const ProjectMain = () => {
         </button>
       </header>
 
-      {/* CRITICAL CHANGE: 
-          Only render the Editor if we are NOT loading AND we actually have files.
-          If we are fetching in the background (isFetching), we keep the editor 
-          visible so it doesn't flicker.
-      */}
-      {isLoading || !files ? (
+      {isLoading || isFetching || !files ? (
         <div className="flex-1 w-full flex items-center justify-center">
           <Spinner />
         </div>
