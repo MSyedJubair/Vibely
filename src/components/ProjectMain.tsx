@@ -26,7 +26,11 @@ const ProjectMain = () => {
   console.log("projectId:", projectId);
 
   const trpc = useTRPC();
-  const { data: project, isLoading, isFetching } = useQuery(
+  const {
+    data: project,
+    isLoading,
+    isFetching,
+  } = useQuery(
     trpc.project.getProject.queryOptions(
       { projectId: Number(projectId) },
       // { enabled: !!projectId && !isNaN(Number(projectId)) },
@@ -46,7 +50,7 @@ const ProjectMain = () => {
     );
 }`,
   });
- 
+
   useEffect(() => {
     if (project?.files) {
       setFiles(project.files as unknown as FileStructure);
@@ -85,40 +89,43 @@ const ProjectMain = () => {
 
       {/* Editor */}
       {!isLoading || !isFetching ? (
-        <div className="flex-1 w-full overflow-hidden">
-        <SandpackProvider
-          template="react"
-          key={project?.id || "loading"}
-          theme="dark"
-          files={files as unknown as SandpackFiles}
-          options={{ externalResources: ["https://cdn.tailwindcss.com"] }}
-          style={{ height: "100%" }}
-        >
-          <SandpackLayout className="h-full! rounded-none! border-none!">
-            <div className={`${isEditorVisible ? "hidden" : "block"} w-full`}>
-              <SandpackPreview
-                showOpenInCodeSandbox={false}
-                showRefreshButton={true}
-                style={{ height: "100%" }}
-                className="bg-black!"
-              />
-            </div>
+        <div className="flex-1 w-full">
+          <SandpackProvider
+            template="react"
+            key={project?.id || "loading"}
+            theme="dark"
+            files={files as unknown as SandpackFiles}
+            options={{ externalResources: ["https://cdn.tailwindcss.com"] }}
+            style={{ height: "100%" }}
+          >
+            <SandpackLayout className="h-full! rounded-none! border-none!">
+              <div className={`${isEditorVisible ? "hidden" : "block"} w-full`}>
+                <SandpackPreview
+                  showOpenInCodeSandbox={false}
+                  showRefreshButton={true}
+                  style={{ height: "100%" }}
+                  className="bg-black!"
+                />
+              </div>
 
-            <div className={`${isEditorVisible ? "" : "hidden"} w-full`}>
-              {/* <SandpackFileExplorer className="h-full! border-r border-white/5 bg-app-bg!" /> */}
-              <SandpackCodeEditor
-                showTabs
-                showLineNumbers
-                style={{ height: "100%" }}
-                extensions={[autocompletion()]}
-                className="bg-app-bg!"
-              />
-            </div>
-          </SandpackLayout>
-        </SandpackProvider>
-      </div>) : (<div className="w-full flex items-center justify-center">
-      <Spinner/>
-    </div>)}
+              <div className={`${isEditorVisible ? "" : "hidden"} w-full`}>
+                {/* <SandpackFileExplorer className="h-full! border-r border-white/5 bg-app-bg!" /> */}
+                <SandpackCodeEditor
+                  showTabs
+                  showLineNumbers
+                  style={{ height: "100%" }}
+                  extensions={[autocompletion()]}
+                  className="bg-app-bg!"
+                />
+              </div>
+            </SandpackLayout>
+          </SandpackProvider>
+        </div>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center overflow-auto">
+          <Spinner />
+        </div>
+      )}
     </main>
   );
 };
