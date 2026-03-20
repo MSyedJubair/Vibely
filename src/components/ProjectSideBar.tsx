@@ -1,18 +1,11 @@
 "use client";
 import React, { useRef, useState } from "react";
 import {
-  Zap,
-  Plus,
-  Sparkles,
-  Send,
   ChevronLeft,
   ChevronRight,
-  User,
 } from "lucide-react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/client";
 import { useParams } from "next/navigation";
-import { Spinner } from "./ui/spinner";
+import Chat from "./Chat";
 
 interface SidebarProps {
   chatWidth: number;
@@ -29,35 +22,7 @@ const ProjectSideBar = ({
 
   const sidebarRef = useRef(null);
   const [isChatOpen, setIsChatOpen] = useState(true);
-  const [chatInput, setChatInput] = useState("");
 
-  // Chat
-  const trpc = useTRPC();
-
-  const { data: Chat, isLoading } = useQuery(
-    trpc.project.getChatMessages.queryOptions({ projectId: Number(projectId) }),
-  );
-
-  const { mutateAsync, isPending } = useMutation(
-    trpc.project.sendMessage.mutationOptions({
-      onSuccess: () => {
-        console.log("fukc you");
-      },
-    }),
-  );
-
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (!chatInput.trim()) return;
-
-    mutateAsync({
-      text: chatInput,
-      role: "User",
-      projectId: Number(projectId),
-    });
-
-    setChatInput("");
-  };
   return (
     <aside
       ref={sidebarRef}
@@ -66,84 +31,7 @@ const ProjectSideBar = ({
         isResizing ? "transition-none" : ""
       }`}
     >
-      <div
-        className="flex flex-col h-full overflow-hidden"
-        style={{ width: `${chatWidth}px` }}
-      >
-        <header className="p-6 border-b border-white/5 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-linear-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-              <Zap size={16} className="text-white fill-current" />
-            </div>
-            <span className="font-bold text-sm tracking-tight text-white block">
-              OpenClone.ai
-            </span>
-          </div>
-          <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-zinc-400 hover:text-white">
-            <Plus size={20} />
-          </button>
-        </header>
-
-        {/* Chat */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-          {/* <div className="w-8 h-8 rounded-xl bg-linear-to-b from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shrink-0">
-              <Sparkles size={14} className="text-indigo-400" />
-            </div>
-            <div className="text-[14px] leading-relaxed text-zinc-300">
-              The sidebar is now resizable! Hover over the right edge to drag,
-              or use the toggle to collapse.
-            </div> */}
-          {isLoading ? (
-            <div className='w-full flex items-center justify-center'>
-              <Spinner />
-            </div>
-          ) : (
-            Chat?.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex gap-4 ${
-                  msg.role === "User" ? "flex-row-reverse" : ""
-                }`}
-              >
-                <div className="w-8 h-8 rounded-xl bg-linear-to-b from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shrink-0">
-                  {msg.role === "Ai" ? (
-                    <Sparkles size={14} className="text-indigo-400" />
-                  ) : (
-                    <User />
-                  )}
-                </div>
-
-                <div className="text-[14px] leading-relaxed text-zinc-300">
-                  {msg.text}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        <footer className="p-6 bg-transparent shrink-0">
-          <form onSubmit={handleSendMessage} className="relative group">
-            <textarea
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Describe your next feature..."
-              className="w-full bg-zinc-950/50 border border-white/10 rounded-2xl p-4 pr-14 text-[14px] focus:outline-none focus:ring-2 focus:ring-indigo-500/40 resize-none h-32 transition-all shadow-2xl"
-            />
-            <button
-              type="submit"
-              className={`absolute right-3 bottom-3 p-2.5 rounded-xl transition-all shadow-lg active:scale-90 
-              ${
-                !chatInput.trim()
-                  ? "bg-gray-500 text-gray-300 cursor-not-allowed"
-                  : "bg-white text-black hover:bg-zinc-200"
-              }`}
-              disabled={!chatInput.trim()}
-            >
-              <Send size={16} />
-            </button>
-          </form>
-        </footer>
-      </div>
+      {isChatOpen && (<Chat chatWidth={chatWidth} projectId={projectId?.toString() ?? ''}/>)}
 
       {/* Resize Handle (The invisible area that triggers dragging) */}
       {isChatOpen && (

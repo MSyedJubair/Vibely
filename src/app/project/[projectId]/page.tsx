@@ -37,7 +37,6 @@ export default function LovableClone() {
       window.removeEventListener("mouseup", stopResizing);
     };
   }, [resize, stopResizing]);
-
   
 
   return (

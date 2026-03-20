@@ -7,7 +7,7 @@ export const projectRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        description: z.string()
+        description: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -42,78 +42,78 @@ export const projectRouter = createTRPCRouter({
         data: {
           chatId: chat.id,
           text: "I've done the initial setup. Feel free to ask me to customize",
-          role: 'Ai'
+          role: "Ai",
         },
       });
 
-      return project
+      return project;
     }),
-  
-  getProject: protectedProcedure
-  .input(
-    z.object({
-      projectId: z.number()
-    })
-  )
-  .query(async ({ ctx, input }) => {
-    const project = await ctx.prisma.project.findUnique({
-      where: {
-        id: input.projectId
-      }
-    })
 
-    return project
-  }),
+  getProject: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.number(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const project = await ctx.prisma.project.findUnique({
+        where: {
+          id: input.projectId,
+        },
+      });
+
+      return project;
+    }),
 
   getChatMessages: protectedProcedure
-  .input(
-    z.object({
-      projectId: z.number()
-    })
-  )
-  .query(async ({ ctx, input }) => {
-    const chat = await ctx.prisma.chat.findUnique({
-      where: {
-        projectId: input.projectId
-      }
-    })
+    .input(
+      z.object({
+        projectId: z.number(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const chat = await ctx.prisma.chat.findUnique({
+        where: {
+          projectId: input.projectId,
+        },
+      });
 
-    const messages = await ctx.prisma.message.findMany({
-      where: {
-        chatId: chat?.id
-      }
-    })
+      const messages = await ctx.prisma.message.findMany({
+        where: {
+          chatId: chat?.id,
+        },
+      });
 
-    return messages
-  }),
+      return messages;
+    }),
 
   sendMessage: protectedProcedure
-  .input(
-    z.object({
-      text: z.string(),
-      role: z.string(),
-      projectId: z.number()
-    })
-  )
-  .mutation(async ({ ctx, input }) => {
-    const chat = await ctx.prisma.chat.findUnique({
-      where: {
-        projectId: input.projectId
+    .input(
+      z.object({
+        text: z.string(),
+        role: z.string(),
+        projectId: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const chat = await ctx.prisma.chat.findUnique({
+        where: {
+          projectId: input.projectId,
+        },
+      });
+
+      if (!chat) {
+        return;
       }
-    })
 
-    if (!chat) {
-      return
-    }
+      const msg = await ctx.prisma.message.create({
+        data: {
+          text: input.text,
+          role: input.role,
+          chatId: chat!.id,
+        },
+      });
 
-    const msg = await ctx.prisma.message.create({
-      data: {
-        text: input.text,
-        role: input.role,
-        chatId: chat!.id
-      }
-    })
-
-    return msg
-  }),
+      return msg;
+    }),
 });
