@@ -4,29 +4,31 @@ import { Spinner } from "./ui/spinner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { useScrollToBottom } from "@/hooks/useScrollBottom";
-// import { SandpackFiles } from "@codesandbox/sandpack-react";
 
-const Chat = ({
-  chatWidth,
-  projectId,
-}: {
+type ChatProps = {
   chatWidth: number;
   projectId: string;
-}) => {
-  const [chatInput, setChatInput] = useState("");
+}
+
+const Chat = ({ chatWidth, projectId,
+}: ChatProps) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  
+  const [chatInput, setChatInput] = useState("");
 
+  // Chat
   const { data: Chat, isLoading } = useQuery(
     trpc.project.getChatMessages.queryOptions({ projectId: Number(projectId) }),
   );
-
   const messagesEndRef = useScrollToBottom<HTMLDivElement>([Chat?.length || 0]);
 
+  // Project
   const { data: project } = useQuery(
     trpc.project.getProject.queryOptions({ projectId: Number(projectId) })
   );
 
+  // Ai - two is better than one 😉
   const { mutateAsync: generate, isPending: isAiGenerating } = useMutation(
     trpc.Ai.getSummary.mutationOptions({
       onSuccess: async () => {
@@ -51,7 +53,7 @@ const Chat = ({
     }),
   );
 
-  // Send Msg
+  // Send Msg - with optimistic update bruh
   const { mutateAsync: sendMessage } = useMutation(
     trpc.project.sendMessage.mutationOptions({
       onSuccess: async () => {
@@ -68,7 +70,7 @@ const Chat = ({
         await queryClient.cancelQueries({ queryKey });
         const previousMessages = queryClient.getQueryData(queryKey);
 
-        queryClient.setQueryData(queryKey, (old: any) => [
+        queryClient.setQueryData(queryKey, (old) => [
           ...(old ?? []),
           {
             id: Math.random(),
@@ -110,6 +112,7 @@ const Chat = ({
     });
 
     if (Chat!.length > 1) {
+      // @ts-expect-error: Its JSON so its showing all types
       const res = await editCode({ prevCode: JSON.stringify(project!.files), userReq: input, projectId: projectId });
       await sendMessage({
         text: res.summary,
@@ -127,6 +130,7 @@ const Chat = ({
     }
   };
 
+  // Handle Enter Key
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -211,7 +215,7 @@ const Chat = ({
         )}
       </div>
 
-      {/* Footer / Input */}
+      {/* Input */}
       <footer className="p-4 bg-zinc-950 shrink-0">
         <div className="relative group max-w-4xl mx-auto">
           <textarea

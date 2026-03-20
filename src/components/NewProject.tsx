@@ -11,7 +11,6 @@ const NewProject = () => {
   const trpc = useTRPC();
   const router = useRouter();
   
-  // State to track if the browser is currently navigating
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   const { data: User, isLoading: isUserLoading } = useQuery(
