@@ -40,7 +40,7 @@ export default function RootLayout({
           <Toaster />
           <div className="flex flex-row w-full">
             <SideBar />
-            {children}
+            <main className="flex-1">{children}</main>
           </div>
         </TRPCReactProvider>
       </body>
