@@ -45,7 +45,7 @@ const PromptInput = () => {
 
       // Create a new Project
       const project = await createProject({
-        name: prompt.slice(0, 30) || "New Project",
+        name: "New Project",
         description: "Freshly created project",
       });
 
