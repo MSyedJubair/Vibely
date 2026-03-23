@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { useScrollToBottom } from "@/hooks/useScrollBottom";
 import { toast } from "sonner";
+import Pusher from "pusher-js";
 
 type ChatProps = {
   chatWidth: number;
@@ -26,15 +27,16 @@ const Chat = ({ chatWidth, projectId }: ChatProps) => {
   // Project
   const { data: project } = useQuery({
     ...trpc.project.getProject.queryOptions({ projectId: Number(projectId) }),
-    refetchInterval: (query) => (query.state.data?.status === "processing" ? 1000 : false),
+    refetchInterval: (query) =>
+      query.state.data?.status === "processing" ? 1000 : false,
   });
 
   const isAiGenerating = project?.status === "processing";
 
-  // Ai   
+  // Ai
   const { mutate: generateResponse, isPending: isGenerating } = useMutation(
     trpc.Ai.getAiResponse.mutationOptions(),
-  )
+  );
 
   // Send Msg - with optimistic update bruh
   const { mutateAsync: sendMessage } = useMutation(
@@ -108,26 +110,58 @@ const Chat = ({ chatWidth, projectId }: ChatProps) => {
     }
   };
 
+  // useEffect(() => {
+  //   if (!isAiGenerating) {
+  //     // invalidate chat
+  //     queryClient.invalidateQueries({
+  //       queryKey: trpc.project.getChatMessages.queryKey({
+  //         projectId: Number(projectId)
+  //       })
+  //     });
+  //     // invalidate project
+  //     queryClient.invalidateQueries({
+  //       queryKey: trpc.project.getProject.queryKey({
+  //         projectId: Number(projectId)
+  //       })
+  //     });
+  //     toast('Completed building your website')
+  //   }
+  //   if (project?.status === 'failed') {
+  //     toast('Failed to generate')
+  //   }
+  // }, [isAiGenerating, projectId]);
   useEffect(() => {
-    if (!isAiGenerating) {
-      // invalidate chat
-      queryClient.invalidateQueries({
-        queryKey: trpc.project.getChatMessages.queryKey({
-          projectId: Number(projectId)
-        })
-      });
-      // invalidate project
+    // 1. Initialize Pusher Client
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+    });
+
+    // 2. Subscribe to this specific project's channel
+    const channel = pusher.subscribe(`project-${projectId}`);
+
+    // 3. Listen for the "refetch-code" event
+    channel.bind("refetch-code", () => {
+      // ⚡️ IMMEDIATELY invalidate queries
       queryClient.invalidateQueries({
         queryKey: trpc.project.getProject.queryKey({
-          projectId: Number(projectId)
-        })
+          projectId: Number(projectId),
+        }),
       });
-      toast('Completed building your website')
-    }
-    if (project?.status === 'failed') {
-      toast('Failed to generate')
-    }
-  }, [isAiGenerating, projectId]);
+      queryClient.invalidateQueries({
+        queryKey: trpc.project.getChatMessages.queryKey({
+          projectId: Number(projectId),
+        }),
+      });
+
+      toast.success("Project updated!");
+    });
+
+    // 4. Cleanup on unmount
+    return () => {
+      pusher.unsubscribe(`project-${projectId}`);
+      pusher.disconnect();
+    };
+  }, [projectId, queryClient]);
 
   return (
     <div
@@ -191,16 +225,17 @@ const Chat = ({ chatWidth, projectId }: ChatProps) => {
               </div>
             ))}
 
-            {isGenerating || isAiGenerating && (
-              <div className="flex gap-3 animate-pulse">
-                <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center">
-                  <Sparkles size={14} className="text-indigo-400" />
+            {isGenerating ||
+              (isAiGenerating && (
+                <div className="flex gap-3 animate-pulse">
+                  <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center">
+                    <Sparkles size={14} className="text-indigo-400" />
+                  </div>
+                  <div className="bg-zinc-900/50 border border-white/5 px-4 py-2.5 rounded-2xl rounded-tl-none">
+                    <Spinner />
+                  </div>
                 </div>
-                <div className="bg-zinc-900/50 border border-white/5 px-4 py-2.5 rounded-2xl rounded-tl-none">
-                  <Spinner />
-                </div>
-              </div>
-            )}
+              ))}
             <div ref={messagesEndRef} className="h-2" />
           </>
         )}
