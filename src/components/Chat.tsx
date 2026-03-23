@@ -17,21 +17,25 @@ const Chat = ({ chatWidth, projectId }: ChatProps) => {
   const queryClient = useQueryClient();
 
   const [chatInput, setChatInput] = useState("");
-  const [isAiGenerating, setisAiGenerating] = useState(false)
+  const [isAiGenerating, setisAiGenerating] = useState(false);
 
   // Chat
   const { data: Chat, isLoading } = useQuery(
     trpc.project.getChatMessages.queryOptions({ projectId: Number(projectId) }),
   );
+  console.log(
+    trpc.project.getChatMessages.queryKey({
+      projectId: Number(projectId),
+    }),
+  );
   const messagesEndRef = useScrollToBottom<HTMLDivElement>([Chat?.length || 0]);
-
 
   // Ai
   const { mutate: generateResponse } = useMutation(
     trpc.Ai.getAiResponse.mutationOptions({
       onMutate: () => {
-        setisAiGenerating(true)
-      }
+        setisAiGenerating(true);
+      },
     }),
   );
 
@@ -126,7 +130,7 @@ const Chat = ({ chatWidth, projectId }: ChatProps) => {
         }),
       });
 
-      setisAiGenerating(false)
+      setisAiGenerating(false);
 
       toast.success("Project updated!");
     });
@@ -201,15 +205,15 @@ const Chat = ({ chatWidth, projectId }: ChatProps) => {
             ))}
 
             {isAiGenerating && (
-                <div className="flex gap-3 animate-pulse">
-                  <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center">
-                    <Sparkles size={14} className="text-indigo-400" />
-                  </div>
-                  <div className="bg-zinc-900/50 border border-white/5 px-4 py-2.5 rounded-2xl rounded-tl-none">
-                    <Spinner />
-                  </div>
+              <div className="flex gap-3 animate-pulse">
+                <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center">
+                  <Sparkles size={14} className="text-indigo-400" />
                 </div>
-              )}
+                <div className="bg-zinc-900/50 border border-white/5 px-4 py-2.5 rounded-2xl rounded-tl-none">
+                  <Spinner />
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} className="h-2" />
           </>
         )}
