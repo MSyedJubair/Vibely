@@ -1,19 +1,40 @@
 import ProjectMain from "@/components/ProjectMain";
 import ProjectSideBar from "@/components/ProjectSideBar";
+import { headers } from "next/headers";
+import prisma from "@/lib/db";
+import { auth } from "@/lib/auth";
 
-export default function LovableClone() {
+export default async function LovableClone({
+  params,
+}: {
+  params: { projectId: string };
+}) {
+  const { projectId } = params;
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
+
+  const project = await prisma.project.findUnique({
+    where: {
+      id: projectId,
+    },
+  });
+
+  const isAuthor = project?.authorId === user?.id
+
   return (
     <div
       className={`flex h-screen w-full bg-app-bg text-zinc-300 overflow-hidden selection:bg-indigo-500/30 font-sans `}
     >
-
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px] animate-drift" />
         <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-purple-500/10 rounded-full blur-[120px] animate-drift-slow" />
       </div>
 
       {/* LEFT: Resizable & Collapsible Chat Panel} */}
-      <ProjectSideBar/>
+      <ProjectSideBar />
 
       {/* RIGHT: Preview & Code Panel */}
       <ProjectMain />

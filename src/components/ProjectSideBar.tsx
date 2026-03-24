@@ -1,9 +1,6 @@
 "use client";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useParams } from "next/navigation";
 import Chat from "./Chat";
 
@@ -13,38 +10,38 @@ const ProjectSideBar = () => {
   const sidebarRef = useRef(null);
   const [isChatOpen, setIsChatOpen] = useState(true);
 
-    // Resizing State
-    const [chatWidth, setChatWidth] = useState(400);
-    const [isResizing, setIsResizing] = useState(false);
-  
-    // Resizing Logic
-    const startResizing = useCallback(() => {
-      setIsResizing(true);
-    }, []);
-  
-    const stopResizing = useCallback(() => {
-      setIsResizing(false);
-    }, []);
-  
-    const resize = useCallback(
-      (e: MouseEvent) => {
+  // Resizing State
+  const [chatWidth, setChatWidth] = useState(400);
+  const [isResizing, setIsResizing] = useState(false);
+
+  // Resizing Logic
+  const startResizing = useCallback(() => {
+    setIsResizing(true);
+  }, []);
+
+  const stopResizing = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const resize = useCallback(
+    (e: MouseEvent) => {
       if (isResizing) {
         // Limit min width to 280 and max to 600
         const newWidth = Math.min(Math.max(280, e.clientX), 800);
         setChatWidth(newWidth);
       }
-      },
-      [isResizing],
-    );
-  
-    useEffect(() => {
-      window.addEventListener("mousemove", resize);
-      window.addEventListener("mouseup", stopResizing);
-      return () => {
-        window.removeEventListener("mousemove", resize);
-        window.removeEventListener("mouseup", stopResizing);
-      };
-    }, [resize, stopResizing]);
+    },
+    [isResizing],
+  );
+
+  useEffect(() => {
+    window.addEventListener("mousemove", resize);
+    window.addEventListener("mouseup", stopResizing);
+    return () => {
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+    };
+  }, [resize, stopResizing]);
 
   return (
     <aside
@@ -54,7 +51,9 @@ const ProjectSideBar = () => {
         isResizing ? "transition-none" : ""
       }`}
     >
-      {isChatOpen && (<Chat chatWidth={chatWidth} projectId={projectId?.toString() ?? ''}/>)}
+      {isChatOpen && (
+        <Chat chatWidth={chatWidth} projectId={projectId?.toString() ?? ""} />
+      )}
 
       {/* Resize Handle (The invisible area that triggers dragging) */}
       {isChatOpen && (
