@@ -4,12 +4,13 @@ import { headers } from "next/headers";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
 
-export default async function LovableClone({
-  params,
-}: {
-  params: { projectId: string };
-}) {
-  const { projectId } = params;
+interface Props {
+  params: Promise<{ projectId: string }>;
+}
+
+export default async function LovableClone({ params }: Props) {
+  const { projectId } = await params;
+  
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -18,11 +19,13 @@ export default async function LovableClone({
 
   const project = await prisma.project.findUnique({
     where: {
-      id: projectId,
+      id: Number(projectId),
     },
   });
 
   const isAuthor = project?.authorId === user?.id
+
+  console.log(isAuthor)
 
   return (
     <div
