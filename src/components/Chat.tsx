@@ -24,11 +24,6 @@ const Chat = ({ chatWidth, projectId, isAuthor }: ChatProps) => {
   const { data: Chat, isLoading } = useQuery(
     trpc.project.getChatMessages.queryOptions({ projectId: Number(projectId) }),
   );
-  console.log(
-    trpc.project.getChatMessages.queryKey({
-      projectId: Number(projectId),
-    }),
-  );
   const messagesEndRef = useScrollToBottom<HTMLDivElement>([Chat?.length || 0]);
 
   // Ai

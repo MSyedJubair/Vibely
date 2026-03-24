@@ -31,12 +31,9 @@ const SideBar = () => {
   const pathname = usePathname(); // 2. Get current route
   const trpc = useTRPC();
 
-  const router = useRouter()
-  
-  const {
-    data: User,
-    isLoading,
-  } = useQuery(trpc.user.getUser.queryOptions());
+  const router = useRouter();
+
+  const { data: User, isLoading } = useQuery(trpc.user.getUser.queryOptions());
 
   // 3. Define navigation items for easier mapping
   const navItems = [
@@ -121,9 +118,15 @@ const SideBar = () => {
               isSidebarCollapsed ? "justify-center" : "gap-3"
             } p-2 rounded-xl hover:bg-white/5 cursor-pointer transition-colors`}
           >
-            <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/50 flex items-center justify-center text-indigo-300 font-medium shrink-0">
-              {User.name?.[0]?.toUpperCase()}
-            </div>
+            {User.image ? (
+              <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-blue-500/50 flex items-center justify-center text-indigo-300 font-medium shrink-0">
+                <img src={User.image} alt="UserProfile" className="rounded-full" />
+              </div>
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/50 flex items-center justify-center text-indigo-300 font-medium shrink-0">
+                {User.name?.[0]?.toUpperCase()}
+              </div>
+            )}
 
             {!isSidebarCollapsed && (
               <DropdownMenu>
@@ -140,15 +143,19 @@ const SideBar = () => {
                 <DropdownMenuContent side="top" className="w-56" align="end">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    Settings
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="text-red-400 focus:text-red-400 cursor-pointer"
                     onClick={() => {
                       authClient.signOut();
                       toast("Successfully Signed Out");
-                      router.push('/')
+                      router.push("/");
                     }}
                   >
                     Logout

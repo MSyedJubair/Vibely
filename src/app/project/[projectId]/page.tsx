@@ -15,6 +15,14 @@ export default async function LovableClone({ params }: Props) {
     headers: await headers(),
   });
 
+  const checkIfVerified = async () => {
+    const session = await auth.api.getSession({ headers: await headers() });
+    console.log(session?.user.emailVerified)
+    return session?.user.emailVerified;
+  };
+
+  checkIfVerified()
+
   const user = session?.user;
 
   const project = await prisma.project.findUnique({

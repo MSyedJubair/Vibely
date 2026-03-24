@@ -55,6 +55,74 @@ export default function SignUp() {
       provider: "github",
     });
   };
+  // <form onSubmit={handleSignup} className="space-y-5">
+  //   {/* Name Input */}
+  //   <div className="space-y-2">
+  //     <label className="text-sm font-medium text-gray-300 ml-1">
+  //       Full Name
+  //     </label>
+  //     <div className="relative group">
+  //       <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-brand-indigo transition-colors" />
+  //       <input
+  //         className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-brand-indigo/50 focus:ring-4 focus:ring-brand-indigo/20 focus:outline-none transition-all placeholder:text-gray-600"
+  //         placeholder="John Doe"
+  //         type="text"
+  //         value={name}
+  //         onChange={(e) => setName(e.target.value)}
+  //         disabled={isLoading}
+  //       />
+  //     </div>
+  //   </div>
+
+  //   {/* Email Input */}
+  //   <div className="space-y-2">
+  //     <label className="text-sm font-medium text-gray-300 ml-1">
+  //       Email Address
+  //     </label>
+  //     <div className="relative group">
+  //       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-brand-indigo transition-colors" />
+  //       <input
+  //         className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-brand-indigo/50 focus:ring-4 focus:ring-brand-indigo/20 focus:outline-none transition-all placeholder:text-gray-600"
+  //         placeholder="name@company.com"
+  //         type="email"
+  //         value={email}
+  //         onChange={(e) => setEmail(e.target.value)}
+  //         disabled={isLoading}
+  //       />
+  //     </div>
+  //   </div>
+
+  //   {/* Password Input */}
+  //   <div className="space-y-2">
+  //     <label className="text-sm font-medium text-gray-300 ml-1">Password</label>
+  //     <div className="relative group">
+  //       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-brand-purple transition-colors" />
+  //       <input
+  //         className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-brand-purple/50 focus:ring-4 focus:ring-brand-purple/20 focus:outline-none transition-all placeholder:text-gray-600"
+  //         placeholder="••••••••"
+  //         type="password"
+  //         value={password}
+  //         onChange={(e) => setPassword(e.target.value)}
+  //         disabled={isLoading}
+  //       />
+  //     </div>
+  //   </div>
+
+  //   <button
+  //     type="submit"
+  //     disabled={isLoading}
+  //     className="w-full mt-2 py-3.5 rounded-xl bg-gradient-to-r from-brand-indigo via-brand-purple to-brand-pink text-white font-bold shadow-lg shadow-brand-purple/20 hover:shadow-brand-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-70 disabled:hover:scale-100"
+  //   >
+  //     {isLoading ? (
+  //       <span className="flex items-center justify-center gap-2">
+  //         <Loader2 className="h-5 w-5 animate-spin" />
+  //         Creating Account...
+  //       </span>
+  //     ) : (
+  //       "Create Account"
+  //     )}
+  //   </button>
+  // </form>;
 
   return (
     <AuthLayout>
@@ -68,77 +136,6 @@ export default function SignUp() {
             <p className="text-gray-400">Start your journey 🚀</p>
           </div>
 
-          <form onSubmit={handleSignup} className="space-y-5">
-            {/* Name Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300 ml-1">
-                Full Name
-              </label>
-              <div className="relative group">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-brand-indigo transition-colors" />
-                <input
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-brand-indigo/50 focus:ring-4 focus:ring-brand-indigo/20 focus:outline-none transition-all placeholder:text-gray-600"
-                  placeholder="John Doe"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-
-            {/* Email Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300 ml-1">
-                Email Address
-              </label>
-              <div className="relative group">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-brand-indigo transition-colors" />
-                <input
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-brand-indigo/50 focus:ring-4 focus:ring-brand-indigo/20 focus:outline-none transition-all placeholder:text-gray-600"
-                  placeholder="name@company.com"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-
-            {/* Password Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300 ml-1">
-                Password
-              </label>
-              <div className="relative group">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-brand-purple transition-colors" />
-                <input
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-brand-purple/50 focus:ring-4 focus:ring-brand-purple/20 focus:outline-none transition-all placeholder:text-gray-600"
-                  placeholder="••••••••"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full mt-2 py-3.5 rounded-xl bg-gradient-to-r from-brand-indigo via-brand-purple to-brand-pink text-white font-bold shadow-lg shadow-brand-purple/20 hover:shadow-brand-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-70 disabled:hover:scale-100"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  Creating Account...
-                </span>
-              ) : (
-                "Create Account"
-              )}
-            </button>
-          </form>
-
           {/* Divider */}
           <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
@@ -146,14 +143,17 @@ export default function SignUp() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-[#0a0a0a] px-2 text-gray-500">
-                Or sign up with
+                Sign up with
               </span>
             </div>
           </div>
 
           {/* Social Signups */}
           <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center gap-2 py-2.5 border border-white/10 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium" onClick={handleSignInWithGithub}>
+            <button
+              className="flex items-center justify-center gap-2 py-2.5 border border-white/10 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium"
+              onClick={handleSignInWithGithub}
+            >
               <Github className="h-5 w-5" /> GitHub
             </button>
             <button
