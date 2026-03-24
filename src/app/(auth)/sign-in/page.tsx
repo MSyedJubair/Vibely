@@ -49,6 +49,12 @@ export default function SignIn() {
     });
   }
 
+  const handleSignInWithGithub = async () => {
+    const data = await authClient.signIn.social({
+        provider: "github"
+    })
+  }
+
   return (
     <AuthLayout>
       <div className="w-full max-w-md mx-auto">
@@ -125,7 +131,7 @@ export default function SignIn() {
 
           {/* Social Logins */}
           <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center gap-2 py-2.5 border border-white/10 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium">
+            <button className="flex items-center justify-center gap-2 py-2.5 border border-white/10 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium" onClick={handleSignInWithGithub}>
               <Github className="h-5 w-5" /> GitHub
             </button>
             <button className="flex items-center justify-center gap-2 py-2.5 border border-white/10 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium" onClick={handleSignInWithGoogle}>

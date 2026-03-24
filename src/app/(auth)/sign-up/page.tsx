@@ -12,7 +12,7 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const router = useRouter();
 
   const handleSignup = async (e?: React.FormEvent) => {
@@ -40,7 +40,7 @@ export default function SignUp() {
           setIsLoading(false);
           toast.error(ctx.error.message || "Something went wrong");
         },
-      }
+      },
     );
   };
 
@@ -48,7 +48,13 @@ export default function SignUp() {
     const data = await authClient.signIn.social({
       provider: "google",
     });
-  }
+  };
+
+  const handleSignInWithGithub = async () => {
+    const data = await authClient.signIn.social({
+      provider: "github",
+    });
+  };
 
   return (
     <AuthLayout>
@@ -65,7 +71,9 @@ export default function SignUp() {
           <form onSubmit={handleSignup} className="space-y-5">
             {/* Name Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300 ml-1">Full Name</label>
+              <label className="text-sm font-medium text-gray-300 ml-1">
+                Full Name
+              </label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-brand-indigo transition-colors" />
                 <input
@@ -81,7 +89,9 @@ export default function SignUp() {
 
             {/* Email Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300 ml-1">Email Address</label>
+              <label className="text-sm font-medium text-gray-300 ml-1">
+                Email Address
+              </label>
               <div className="relative group">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-brand-indigo transition-colors" />
                 <input
@@ -97,7 +107,9 @@ export default function SignUp() {
 
             {/* Password Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300 ml-1">Password</label>
+              <label className="text-sm font-medium text-gray-300 ml-1">
+                Password
+              </label>
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-brand-purple transition-colors" />
                 <input
@@ -133,16 +145,21 @@ export default function SignUp() {
               <span className="w-full border-t border-white/10"></span>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[#0a0a0a] px-2 text-gray-500">Or sign up with</span>
+              <span className="bg-[#0a0a0a] px-2 text-gray-500">
+                Or sign up with
+              </span>
             </div>
           </div>
 
           {/* Social Signups */}
           <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center gap-2 py-2.5 border border-white/10 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium">
+            <button className="flex items-center justify-center gap-2 py-2.5 border border-white/10 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium" onClick={handleSignInWithGithub}>
               <Github className="h-5 w-5" /> GitHub
             </button>
-            <button className="flex items-center justify-center gap-2 py-2.5 border border-white/10 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium" onClick={handleSignInWithGoogle}>
+            <button
+              className="flex items-center justify-center gap-2 py-2.5 border border-white/10 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium"
+              onClick={handleSignInWithGoogle}
+            >
               <Chrome className="h-5 w-5" /> Google
             </button>
           </div>
@@ -150,7 +167,10 @@ export default function SignUp() {
           {/* Footer */}
           <p className="text-gray-400 text-sm mt-8 text-center">
             Already have an account?{" "}
-            <a href="/sign-in" className="text-white font-semibold hover:text-brand-indigo transition-colors underline underline-offset-4 decoration-brand-indigo/50">
+            <a
+              href="/sign-in"
+              className="text-white font-semibold hover:text-brand-indigo transition-colors underline underline-offset-4 decoration-brand-indigo/50"
+            >
               Sign in
             </a>
           </p>
