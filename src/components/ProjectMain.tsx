@@ -16,10 +16,6 @@ import { Spinner } from "./ui/spinner";
 import MonacoEditor from "@/components/MonacoEditor";
 import { toast } from "sonner";
 
-type FileStructure = {
-  [key: string]: string | FileStructure | null;
-};
-
 const Devices = [
   {
     id: "mobile",
@@ -36,7 +32,7 @@ const Devices = [
 ];
 const ProjectMain = ({isAuthor}:{isAuthor:boolean}) => {
   const [isEditorVisible, setIsEditorVisible] = useState(false);
-  const [previewDevice, setPreviewDevice] = useState();
+  const [previewDevice, setPreviewDevice] = useState('');
   const { projectId } = useParams();
   const trpc = useTRPC();
 
@@ -48,6 +44,7 @@ const ProjectMain = ({isAuthor}:{isAuthor:boolean}) => {
     trpc.project.saveCode.mutationOptions(),
   );
 
+  // @ts-expect-error - hey
   const files = project?.files;
 
   if (isLoading || !files) {

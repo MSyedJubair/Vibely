@@ -3,7 +3,6 @@ import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
 import {
   LayoutDashboard,
-  Clock,
   MoreVertical,
   ArrowRight,
   MessageSquare,
@@ -17,7 +16,6 @@ import {
 import Link from "next/link";
 import { timeAgo } from "@/lib/utils";
 import NewProject from "@/components/NewProject";
-import { Spinner } from "@/components/ui/spinner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -27,6 +25,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Project } from "@prisma/client";
 
 const Dashboard = async () => {
   const session = await auth.api.getSession({
@@ -121,7 +120,7 @@ const Dashboard = async () => {
           <section>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {projects.length > 0 ? (
-                projects.map((project) => (
+                projects.map((project: Project) => (
                   <Link
                     href={`/project/${project.id}`}
                     key={project.id}
@@ -197,7 +196,7 @@ const Dashboard = async () => {
           </section>
         </div>
         <div className="space-y-6">
-          <section className="bg-gradient-to-br from-brand-indigo/10 to-transparent p-6 rounded-3xl border border-brand-indigo/20">
+          <section className="bg-linear-to-br from-brand-indigo/10 to-transparent p-6 rounded-3xl border border-brand-indigo/20">
             <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
               <Zap className="w-4 h-4 text-status-token" />
               Quick Actions
@@ -215,7 +214,7 @@ const Dashboard = async () => {
                       <p className="text-sm font-medium text-zinc-200">
                         Continue Last
                       </p>
-                      <p className="text-xs text-zinc-500 truncate max-w-[120px]">
+                      <p className="text-xs text-zinc-500 truncate max-w-30">
                         {lastProject.name}
                       </p>
                     </div>
