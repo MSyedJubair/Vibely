@@ -1,12 +1,15 @@
+export const dynamic = "force-dynamic";
+
 import prisma from "@/lib/db";
-import { 
-  Plus, 
-  Clock, 
-  ExternalLink, 
-  Code2, 
+import {
+  Plus,
+  Clock,
+  ExternalLink,
+  Code2,
   User as UserIcon,
 } from "lucide-react";
 import Link from "next/link";
+
 
 const formatDate = (date: Date) => {
   return new Intl.DateTimeFormat("en-US", {
@@ -21,8 +24,10 @@ const Projects = async () => {
     orderBy: { updatedAt: "desc" },
     include: {
       author: true, // Fetch author name
-    }
+    },
   });
+
+  console.log(projects.length)
 
   return (
     <div className="min-h-screen bg-app-bg text-zinc-300 p-8 relative overflow-hidden">
@@ -34,10 +39,17 @@ const Projects = async () => {
       <div className="max-w-7xl mx-auto relative z-10">
         <header className="flex items-center justify-between mb-12">
           <div>
-            <h1 className="text-4xl font-bold text-white tracking-tight mb-2">My Projects</h1>
-            <p className="text-zinc-500 font-medium">Manage and edit your AI-generated applications.</p>
+            <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
+              My Projects
+            </h1>
+            <p className="text-zinc-500 font-medium">
+              Manage and edit your AI-generated applications.
+            </p>
           </div>
-          <Link href="/" className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-xl font-bold hover:bg-zinc-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+          <Link
+            href="/"
+            className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-xl font-bold hover:bg-zinc-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+          >
             <Plus size={18} /> New Project
           </Link>
         </header>
@@ -59,7 +71,7 @@ const Projects = async () => {
                   {project.name || "Untitled Project"}
                 </h3>
               </Link>
-              
+
               <p className="text-zinc-500 text-sm line-clamp-2 mb-4 h-10">
                 {project.description}
               </p>
@@ -79,9 +91,14 @@ const Projects = async () => {
                   <Clock size={12} />
                   <span>{formatDate(project.updatedAt)}</span>
                 </div>
-                
-                <Link href={`/project/${project.id}`} className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-xs font-bold text-brand-indigo">View</span>
+
+                <Link
+                  href={`/project/${project.id}`}
+                  className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <span className="text-xs font-bold text-brand-indigo">
+                    View
+                  </span>
                   <ExternalLink size={14} className="text-brand-indigo" />
                 </Link>
               </div>
