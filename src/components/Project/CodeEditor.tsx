@@ -1,20 +1,21 @@
 "use client";
 
 import { CopyMinus, Files, SaveAll } from "lucide-react";
-import { useState } from "react";
-import { 
-  ControlledTreeEnvironment, 
-  Tree, 
-  TreeItem, 
-  TreeItemIndex 
+import { useState, useEffect } from "react";
+import {
+  ControlledTreeEnvironment,
+  Tree,
+  TreeItem,
+  TreeItemIndex,
 } from "react-complex-tree";
 
 import Editor from "@monaco-editor/react";
 import "react-complex-tree/lib/style-modern.css";
 import { useTRPC } from "@/trpc/client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Spinner } from "../ui/spinner";
 
-/** * Types for the WebContainer template structure 
+/** * Types for the WebContainer template structure
  */
 export interface FileNode {
   file: {
@@ -58,7 +59,9 @@ const readWebContainerTemplate = (
       canMove: true,
       isFolder,
       children: isFolder
-        ? Object.keys((value as DirectoryNode).directory).map((child) => `${id}/${child}`)
+        ? Object.keys((value as DirectoryNode).directory).map(
+            (child) => `${id}/${child}`,
+          )
         : [],
       data: key,
       content: !isFolder ? (value as FileNode).file?.contents : null,
@@ -72,21 +75,66 @@ const readWebContainerTemplate = (
   return data;
 };
 
-interface CodeEditorProps {
-  code: WebContainerTemplate;
-}
+function readTreeTemplate(items: Record<string, CustomTreeItem>) {
+  function buildNode(nodeId: string) {
+    const node = items[nodeId];
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ code }) => {
-  const tree = readWebContainerTemplate({
-    root: {
-      directory: code,
-    },
+    // If it's a folder → return directory
+    if (node.isFolder) {
+      const directory: WebContainerTemplate = {};
+
+      node.children.forEach((childId) => {
+        const child = items[childId];
+
+        // Use the "content" (or fallback to index) as key name
+        const key = child.index.split("/").at(-1) as unknown as string;
+
+        directory[key] = buildNode(childId);
+      });
+
+      return { directory };
+    }
+
+    // If it's a file → return file with contents
+    return {
+      file: {
+        contents: node.content || "",
+      },
+    };
+  }
+
+  const result: WebContainerTemplate = {};
+
+  // Start from root level children
+  items.root.children.forEach((childId) => {
+    const child = items[childId];
+    const key = child.index.split("/").at(-1) as string;
+
+    result[key] = buildNode(childId);
   });
 
+  return result;
+}
+
+interface CodeEditorProps {
+  code: WebContainerTemplate;
+  projectId: number;
+}
+
+const CodeEditor: React.FC<CodeEditorProps> = ({ code, projectId }) => {
+  const [tree, settree] = useState(
+    readWebContainerTemplate({
+      root: {
+        directory: code,
+      },
+    }),
+  );
+
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
   // Assuming mutationOptions provides the correct generic types from your TRPC router
-  const { mutate: SaveCode } = useMutation(
+  const { mutate: SaveCode, isPending: isSavingCode } = useMutation(
     trpc.project.saveCode.mutationOptions(),
   );
 
@@ -94,6 +142,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code }) => {
   const [expandedItems, setExpandedItems] = useState<TreeItemIndex[]>([]);
   const [selectedItems, setSelectedItems] = useState<TreeItemIndex[]>([]);
   const [Code, setCode] = useState<string>("");
+
+  const [webContainerCode, setwebContainerCode] = useState(
+    readTreeTemplate(tree.items),
+  );
+
+  useEffect(() => {
+    setwebContainerCode(readTreeTemplate(tree.items));
+  }, [tree]);
 
   return (
     <div className="flex flex-row w-full h-screen">
@@ -134,8 +190,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code }) => {
             const item = tree.items[selected as string];
 
             if (item && !item.isFolder) {
-              console.log("File:", item.data);
-              console.log("Code:", item.content);
               setCode(item.content ?? "");
             }
           }}
@@ -150,14 +204,20 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code }) => {
           </span>
           <button
             className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 flex items-center gap-2"
-            onClick={() =>
+            onClick={() => {
               SaveCode({
-                files: "", 
-                projectId: 2, // Todo - will do later
-              })
-            }
+                files: JSON.stringify(webContainerCode),
+                projectId: projectId,
+              });
+              queryClient.invalidateQueries({
+                queryKey: trpc.project.getProject.queryKey({
+                  projectId: projectId,
+                }),
+              });
+            }}
           >
-            <SaveAll size={12} /> Save
+            {isSavingCode && <Spinner />}
+            <SaveAll size={12} /> {isSavingCode ? "Saving.." : "Save"}
           </button>
         </div>
         <Editor
@@ -168,7 +228,23 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code }) => {
           key={selectedItems[0] as string}
           value={Code}
           onChange={(value) => {
-            setCode(value ?? "");
+            const newValue = value ?? "";
+
+            setCode(newValue ?? "");
+            settree((prev) => {
+              if (!focusedItem) return prev;
+
+              return {
+                ...prev,
+                items: {
+                  ...prev.items,
+                  [focusedItem]: {
+                    ...prev.items[focusedItem],
+                    content: newValue,
+                  },
+                },
+              };
+            });
           }}
         />
       </div>

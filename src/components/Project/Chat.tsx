@@ -37,7 +37,7 @@ const Chat = ({ projectId, isAuthor }: ChatProps) => {
     trpc.Ai.getAiResponse.mutationOptions({
       onMutate: () => {
         setisAiGenerating(true);
-      },
+      }, 
     }),
   );
 

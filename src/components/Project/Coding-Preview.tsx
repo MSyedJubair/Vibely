@@ -1,14 +1,12 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Code, Play, Rocket, Save } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
-import { toast } from "sonner";
 import WebPreview from "../WebPreview";
-import { ProjectCtx } from "@/context/ProjectContext";
 import CodeEditor, { WebContainerTemplate } from "./CodeEditor";
 
 const Devices = [
@@ -34,8 +32,6 @@ const ProjectMain = ({ isAuthor }: { isAuthor: boolean }) => {
   const { data: project, isLoading } = useQuery({
     ...trpc.project.getProject.queryOptions({ projectId: Number(projectId) }),
   });
-
-  const projectCTX = useContext(ProjectCtx);
 
   // @ts-expect-error - hey
   const files = project?.files;
@@ -96,35 +92,13 @@ const ProjectMain = ({ isAuthor }: { isAuthor: boolean }) => {
         )}
 
         <div className="flex gap-4">
-          <button
-            disabled={projectCTX.isCodeSaving}
-            onClick={() => {
-              if (!isAuthor) {
-                toast("You're not the owner of this project.");
-                return;
-              }
-              projectCTX.saveCode(Number(projectId));
-            }}
-            className="flex items-center gap-2 px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold transition-all shadow-lg active:scale-95"
-          >
-            {projectCTX.isCodeSaving ? (
-              <Spinner className="w-3 h-3" />
-            ) : (
-              <Save size={14} />
-            )}
-            {projectCTX.isCodeSaving ? "Saving..." : "Saved"}
-          </button>
-
-          <button className="flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all shadow-lg active:scale-95">
-            <Rocket size={14} /> Deploy
-          </button>
         </div>
       </header>
 
       {/* Main Container */}
       <div className="flex-1 w-full relative">
         <div className={`${isEditorVisible ? "flex" : "hidden"}`}>
-          <CodeEditor code={files as unknown as WebContainerTemplate} />
+          <CodeEditor code={files as unknown as WebContainerTemplate} projectId={Number(projectId)} />
         </div>
 
         {/* Preview - Only visible in Preview mode */}

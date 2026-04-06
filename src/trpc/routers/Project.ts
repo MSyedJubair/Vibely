@@ -127,7 +127,7 @@ export const projectRouter = createTRPCRouter({
           id: input.projectId
         },
         data: {
-          files: input.files
+          files: JSON.parse(input.files)
         }
       })
     })
